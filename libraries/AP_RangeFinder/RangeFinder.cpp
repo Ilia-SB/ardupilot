@@ -40,6 +40,7 @@
 #include "AP_RangeFinder_BLPing.h"
 #include "AP_RangeFinder_UAVCAN.h"
 #include "AP_RangeFinder_Lanbao.h"
+#include "AP_RangeFinder_FishFinder.h"
 
 #include <AP_BoardConfig/AP_BoardConfig.h>
 #include <AP_Logger/AP_Logger.h>
@@ -59,6 +60,10 @@ const AP_Param::GroupInfo RangeFinder::var_info[] = {
     // @Path: AP_RangeFinder_Wasp.cpp
     AP_SUBGROUPVARPTR(drivers[0], "1_",  57, RangeFinder, backend_var_info[0]),
 
+    // @Group: 1_
+    // @Path: AP_RangeFinder_FishFinder.cpp
+    AP_SUBGROUPVARPTR(drivers[0], "1_", 61, RangeFinder, backend_var_info[0]),
+
 #if RANGEFINDER_MAX_INSTANCES > 1
     // @Group: 2_
     // @Path: AP_RangeFinder_Params.cpp
@@ -67,6 +72,10 @@ const AP_Param::GroupInfo RangeFinder::var_info[] = {
     // @Group: 2_
     // @Path: AP_RangeFinder_Wasp.cpp
     AP_SUBGROUPVARPTR(drivers[1], "2_",  58, RangeFinder, backend_var_info[1]),
+
+    // @Group: 2_
+    // @Path: AP_RangeFinder_FishFinder.cpp
+    AP_SUBGROUPVARPTR(drivers[1], "2_", 62, RangeFinder, backend_var_info[1]),
 #endif
 
 #if RANGEFINDER_MAX_INSTANCES > 2
@@ -77,6 +86,10 @@ const AP_Param::GroupInfo RangeFinder::var_info[] = {
     // @Group: 3_
     // @Path: AP_RangeFinder_Wasp.cpp
     AP_SUBGROUPVARPTR(drivers[2], "3_",  59, RangeFinder, backend_var_info[2]),
+
+    // @Group: 3_
+    // @Path: AP_RangeFinder_FishFinder.cpp
+    AP_SUBGROUPVARPTR(drivers[2], "3_", 63, RangeFinder, backend_var_info[2]),
 #endif
 
 #if RANGEFINDER_MAX_INSTANCES > 3
@@ -86,7 +99,11 @@ const AP_Param::GroupInfo RangeFinder::var_info[] = {
 
     // @Group: 4_
     // @Path: AP_RangeFinder_Wasp.cpp
-    AP_SUBGROUPVARPTR(drivers[0], "4_",  60, RangeFinder, backend_var_info[3]),
+    AP_SUBGROUPVARPTR(drivers[3], "4_",  60, RangeFinder, backend_var_info[3]),
+
+    // @Group: 4_
+    // @Path: AP_RangeFinder_FishFinder.cpp
+    AP_SUBGROUPVARPTR(drivers[3], "4_", 45, RangeFinder, backend_var_info[3]),
 #endif
 
 #if RANGEFINDER_MAX_INSTANCES > 4
@@ -97,6 +114,10 @@ const AP_Param::GroupInfo RangeFinder::var_info[] = {
     // @Group: 5_
     // @Path: AP_RangeFinder_Wasp.cpp
     AP_SUBGROUPVARPTR(drivers[4], "5_",  34, RangeFinder, backend_var_info[4]),
+
+    // @Group: 5_
+    // @Path: AP_RangeFinder_FishFinder.cpp
+    AP_SUBGROUPVARPTR(drivers[4], "5_", 46, RangeFinder, backend_var_info[4]),
 #endif
 
 #if RANGEFINDER_MAX_INSTANCES > 5
@@ -107,6 +128,10 @@ const AP_Param::GroupInfo RangeFinder::var_info[] = {
     // @Group: 6_
     // @Path: AP_RangeFinder_Wasp.cpp
     AP_SUBGROUPVARPTR(drivers[5], "6_",  36, RangeFinder, backend_var_info[5]),
+
+    // @Group: 6_
+    // @Path: AP_RangeFinder_FishFinder.cpp
+    AP_SUBGROUPVARPTR(drivers[5], "6_", 47, RangeFinder, backend_var_info[5]),
 #endif
 
 #if RANGEFINDER_MAX_INSTANCES > 6
@@ -117,6 +142,10 @@ const AP_Param::GroupInfo RangeFinder::var_info[] = {
     // @Group: 7_
     // @Path: AP_RangeFinder_Wasp.cpp
     AP_SUBGROUPVARPTR(drivers[6], "7_",  38, RangeFinder, backend_var_info[6]),
+
+    // @Group: 7_
+    // @Path: AP_RangeFinder_FishFinder.cpp
+    AP_SUBGROUPVARPTR(drivers[6], "7_", 48, RangeFinder, backend_var_info[6]),
 #endif
 
 #if RANGEFINDER_MAX_INSTANCES > 7
@@ -127,6 +156,10 @@ const AP_Param::GroupInfo RangeFinder::var_info[] = {
     // @Group: 8_
     // @Path: AP_RangeFinder_Wasp.cpp
     AP_SUBGROUPVARPTR(drivers[7], "8_",  40, RangeFinder, backend_var_info[7]),
+
+    // @Group: 8_
+    // @Path: AP_RangeFinder_FishFinder.cpp
+    AP_SUBGROUPVARPTR(drivers[7], "1_", 49, RangeFinder, backend_var_info[7]),
 #endif
 
 #if RANGEFINDER_MAX_INSTANCES > 8
@@ -137,6 +170,10 @@ const AP_Param::GroupInfo RangeFinder::var_info[] = {
     // @Group: 9_
     // @Path: AP_RangeFinder_Wasp.cpp
     AP_SUBGROUPVARPTR(drivers[8], "9_",  42, RangeFinder, backend_var_info[8]),
+
+    // @Group: 9_
+    // @Path: AP_RangeFinder_FishFinder.cpp
+    AP_SUBGROUPVARPTR(drivers[8], "9_", 50, RangeFinder, backend_var_info[8]),
 #endif
 
 #if RANGEFINDER_MAX_INSTANCES > 9
@@ -147,6 +184,10 @@ const AP_Param::GroupInfo RangeFinder::var_info[] = {
     // @Group: A_
     // @Path: AP_RangeFinder_Wasp.cpp
     AP_SUBGROUPVARPTR(drivers[9], "A_",  44, RangeFinder, backend_var_info[9]),
+
+    // @Group: A_
+    // @Path: AP_RangeFinder_FishFinder.cpp
+    AP_SUBGROUPVARPTR(drivers[9], "A_", 51, RangeFinder, backend_var_info[9]),
 #endif
     
     AP_GROUPEND
@@ -530,6 +571,11 @@ void RangeFinder::detect_instance(uint8_t instance, uint8_t& serial_instance)
     case RangeFinder_TYPE_Lanbao:
         if (AP_RangeFinder_Lanbao::detect(serial_instance)) {
             drivers[instance] = new AP_RangeFinder_Lanbao(state[instance], params[instance], serial_instance++);
+        }
+        break;
+    case RangeFinder_TYPE_FISHFINDER:
+        if (AP_RangeFinder_FishFinder::detect(serial_instance)) {
+            drivers[instance] = new AP_RangeFinder_FishFinder(state[instance], params[instance], serial_instance++);
         }
         break;
     default:

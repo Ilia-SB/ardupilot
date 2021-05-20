@@ -1,6 +1,7 @@
 #include "Rover.h"
 
 #include <AP_RangeFinder/RangeFinder_Backend.h>
+#include <AP_RangeFinder/AP_RangeFinder_FishFinder.h>>
 
 #if LOGGING_ENABLED == ENABLED
 
@@ -63,6 +64,23 @@ void Rover::Log_Write_Depth()
                         loc.lat,
                         loc.lng,
                         (double)(rangefinder.distance_cm_orient(ROTATION_PITCH_270) * 0.01f));
+
+    // check if it's fishfinder
+    AP_RangeFinder_Backend *backend = rangefinder.find_instance(ROTATION_PITCH_270);
+    if (backend->type() == rangefinder.RangeFinder_TYPE_FISHFINDER) {
+        if(((AP_RangeFinder_FishFinder*)backend)->fish_detected())
+        {
+            logger.Write("FISH", "TimeUS,Lat,Lng,Depth,LrgDepth,MdmDepth,SmlDepth", "sDUmmmm", "FGG0000", "QLLffff",
+            AP_HAL::micros64(),
+            loc.lat,
+            loc.lng,
+            (double)(rangefinder.distance_cm_orient(ROTATION_PITCH_270) * 0.01f),
+            (double)(((AP_RangeFinder_FishFinder*)backend)->large_fish_depth_cm() * 0.01f),
+            (double)(((AP_RangeFinder_FishFinder*)backend)->medium_fish_depth_cm() * 0.01f),
+            (double)(((AP_RangeFinder_FishFinder*)backend)->small_fish_depth_cm() * 0.01f)
+            );
+        }
+    }
 }
 
 // guided mode logging

@@ -3,6 +3,8 @@
 #include "GCS_Mavlink.h"
 
 #include <AP_RangeFinder/RangeFinder_Backend.h>
+#include <AP_RangeFinder/RangeFinder.h>
+#include <AP_RangeFinder/AP_RangeFinder_FishFinder.h>
 
 MAV_TYPE GCS_Rover::frame_type() const
 {
@@ -157,6 +159,33 @@ void GCS_MAVLINK_Rover::send_rangefinder() const
     for (uint8_t i=0; i<rover.rangefinder.num_sensors(); i++) {
         AP_RangeFinder_Backend *s = rover.rangefinder.get_backend(i);
         if (s == nullptr) {
+            continue;
+        }
+        if (s->type() == RangeFinder::RangeFinder_TYPE_FISHFINDER && s->has_data())
+        {
+            AP_RangeFinder_FishFinder *ff = (AP_RangeFinder_FishFinder*)s;
+            if (ff->has_unreported_data())
+            {
+                mavlink_msg_fishfinder_data_send(
+                    chan,
+                    ff->device_active(),
+                    ff->depth_cm(),
+                    ff->temperature_deg(),
+                    ff->battery_level()
+                    );
+                
+                if (ff->fish_detected())
+                {
+                    mavlink_msg_fishfinder_fish_send(
+                        chan,
+                        ff->small_fish_depth_cm(),
+                        ff->medium_fish_depth_cm(),
+                        ff->large_fish_depth_cm()
+                    );
+                }
+
+                ff->set_data_reported();
+            }
             continue;
         }
         if (!got_one ||
