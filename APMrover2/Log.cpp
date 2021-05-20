@@ -1,7 +1,7 @@
 #include "Rover.h"
 
 #include <AP_RangeFinder/RangeFinder_Backend.h>
-#include <AP_RangeFinder/AP_RangeFinder_FishFinder.h>>
+#include <AP_RangeFinder/AP_RangeFinder_FishFinder.h>
 
 #if LOGGING_ENABLED == ENABLED
 

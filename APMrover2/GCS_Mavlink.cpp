@@ -186,7 +186,7 @@ void GCS_MAVLINK_Rover::send_rangefinder() const
 
                 ff->set_data_reported();
             }
-            continue;
+            //continue;
         }
         if (!got_one ||
             s->distance_cm() < distance_cm) {

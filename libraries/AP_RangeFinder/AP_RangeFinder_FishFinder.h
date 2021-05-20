@@ -73,7 +73,7 @@ protected:
 
 private:
 #ifdef FISHFINDER_DEBUG
-    bool _response_simulated = false;
+    bool _data_requested = false;
 #endif
     FishFinderData _data;
     bool _has_unreported_data = false;

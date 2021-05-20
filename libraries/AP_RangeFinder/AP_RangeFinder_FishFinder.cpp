@@ -76,6 +76,9 @@ bool AP_RangeFinder_FishFinder::get_reading(FishFinderData &ff_data)
         uart->write('d');
         state.last_reading_ms = AP_HAL::millis();
         DEBUG_PRINTF("FishFinder::and return\r");
+#ifdef FISHFINDER_DEBUG
+        _data_requested = true;
+#endif
         return false;
     }
     ff_data.device_active = false;
@@ -110,18 +113,18 @@ bool AP_RangeFinder_FishFinder::get_reading(FishFinderData &ff_data)
         }
     }
 #ifdef FISHFINDER_DEBUG
-    if (!_response_simulated) {
+    if (_data_requested) {
         _data.device_active = true;
         _data.battery_level = 2;
-        _data.depth = 70;
-        _data.large_fish_depth = 50;
-        _data.medium_fish_depth = 40;
-        _data.small_fish_depth = 30;
-        _data.temperature = 28;
+        _data.depth = abs(rand_float())*100;
+        _data.large_fish_depth = abs(rand_float())*100;
+        _data.medium_fish_depth = abs(rand_float())*100;
+        _data.small_fish_depth = abs(rand_float())*100;
+        _data.temperature = abs(rand_float())*100;
         _data.wifi_active = true;
 
         _has_unreported_data = true;
-        _response_simulated = true;
+        _data_requested = false;
         return true;
     }
     else
